@@ -1,0 +1,28 @@
+name: "todo_app"
+services:
+  django:
+    build: .
+    volumes:
+      - ./src:/usr/src
+      - static:/usr/src/local-cdn
+    env_file:
+      - .env
+    ports:
+      - "${PORT}:${PORT}"
+
+  nginx:
+    build:
+      context: ./nginx
+      dockerfile: ./Dockerfile
+    volumes:
+      - static:/etc/nginx/static
+    environment:
+      - PORT=${PORT}
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - django
+
+volumes:
+  static:
